@@ -37,7 +37,7 @@ Mark Sent  Log Error
 
 ## 📷 Workflow Preview
 
-![Workflow](screenshots/workflow.png)
+![Workflow](screenshots/workflow.PNG)
 
 ## 📄 License
 
