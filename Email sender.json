@@ -1,0 +1,407 @@
+{
+  "name": "Email sender",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "7f690ffe-429e-4fed-bccc-6fd61e131cc9",
+      "name": "Run Workflow",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc",
+          "cachedResultName": "Dummy ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "e0530dd0-c869-43e4-8d84-9c4e954e944b",
+      "name": "Get Interns",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        96
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jDkYxQ8kQrmFlG0T",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "status-selected",
+              "leftValue": "={{ $json.staus }}",
+              "rightValue": "selected",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "not-sent",
+              "leftValue": "={{ $json[\"Email Sent\"] }}",
+              "rightValue": "Yes",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5b198ade-b8b5-4092-a66d-7fbd72684a6b",
+      "name": "Only Selected & Not Yet Emailed",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        448,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json[\"email id\"] }}",
+        "subject": "=Umeed Volunteer Program – Internship Update for {{ $json.Name }}",
+        "emailType": "text",
+        "message": "=Dear {{ $json.Name }},\n\nAssalamu Alaikum,\n\nThank you for your interest in the Umeed Volunteer Program.\n\nWe are pleased to inform you that you have been selected for the upcoming internship. Congratulations, and welcome to Umeed Foundation.\n\nInternship Details\n\nDuration: One Month\nStart Date: 20 July 2026\nEnd Date: 16 August 2026\n\nThis internship is designed to provide practical experience while giving you the opportunity to contribute to meaningful community initiatives through Umeed Foundation.\n\nThe orientation schedule, internship guidelines, assigned team, and other important information will be shared with you before the program begins.\n\nWe look forward to having you as part of the Umeed Volunteer Program and wish you a valuable and rewarding internship experience.\n\nKind regards,\n\nTeam Umeed Foundation",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Umeed Foundation Internship Team"
+        }
+      },
+      "id": "189ffeb0-615a-490a-8048-6793e99a59af",
+      "name": "Send Selection Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        96
+      ],
+      "webhookId": "605af0a6-512d-421b-8e89-c1a8e1473225",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "f2NqsYKvQt5VVHvd",
+          "name": "Gmail account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc",
+          "cachedResultName": "Dummy ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "row_number"
+          ],
+          "value": {
+            "row_number": "={{ $('Only Selected & Not Yet Emailed').item.json.row_number }}",
+            "Email Sent": "Yes",
+            "Email Status": "=Sent on {{ $now.toFormat('yyyy-LL-dd HH:mm') }}"
+          },
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contact no",
+              "displayName": "Contact no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email id",
+              "displayName": "email id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "staus",
+              "displayName": "staus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": true,
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b710dde7-6b6c-4700-b2b7-107099b986a2",
+      "name": "Mark Email Sent",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jDkYxQ8kQrmFlG0T",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc",
+          "cachedResultName": "Dummy ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gid=0",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ZT6pGfacVBSJE3NP_mw10QZxV5uzKhoKBzpbAsBy8Fc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "matchingColumns": [
+            "row_number"
+          ],
+          "value": {
+            "row_number": "={{ $('Only Selected & Not Yet Emailed').item.json.row_number }}",
+            "Email Sent": "No",
+            "Email Status": "=Failed on {{ $now.toFormat('yyyy-LL-dd HH:mm') }}: {{ $json.error?.message || $json.error || 'Unknown error' }}"
+          },
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Contact no",
+              "displayName": "Contact no",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email id",
+              "displayName": "email id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "staus",
+              "displayName": "staus",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email Sent",
+              "displayName": "Email Sent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "Email Status",
+              "displayName": "Email Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": true,
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "78880e2c-9b3d-44e4-acb9-5b3ff9e350ed",
+      "name": "Log Email Error",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        896,
+        192
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "jDkYxQ8kQrmFlG0T",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Run Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get Interns",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Interns": {
+      "main": [
+        [
+          {
+            "node": "Only Selected & Not Yet Emailed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Only Selected & Not Yet Emailed": {
+      "main": [
+        [
+          {
+            "node": "Send Selection Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Selection Email": {
+      "main": [
+        [
+          {
+            "node": "Mark Email Sent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Email Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9cc1c08d-2d81-4428-922d-cc2da8bbe195",
+  "meta": {
+    "instanceId": "2f758e7a49e08a396c1d3ac8a1d9d0bf56a67158a49c4957cc51f1bff7a4e1a0"
+  },
+  "nodeGroups": [],
+  "id": "AOICEwWXC4vUbxUt",
+  "tags": []
+}
