@@ -35,10 +35,6 @@ Send Selection Email
 Mark Sent  Log Error
 ```
 
-## 📷 Workflow Preview
-
-![Workflow](screenshots/workflow.PNG)
-
 ## 📄 License
 
 This project is intended for educational and automation purposes.
